@@ -11,5 +11,6 @@
 - `src/`: Production Python modules (e.g. `src/core/llm.py`).
 - `notebooks/`: Hands-on step-by-step practice notebooks (see `.agents/skills/jupyter-lab-reference/SKILL.md`).
 - `docs/study/`: Concept explanations, practical trade-offs, and troubleshooting notes mapped 1:1 to notebooks (`docs/study/README.md`).
+- `docs/sessions/`: Chronological session logs capturing Q&A flow and design decisions (`docs/sessions/README.md`).
 - `TODO.md`: Now/Next/Later roadmap and current handoff state across machines. Read at session start and update completed/next items before pushing.
 - Keep notebooks focused on technical reference + hands-on execution, and record conceptual Q&A, design decisions, and bug notes in `docs/study/`.

@@ -14,6 +14,7 @@ rag-cag/
 ├── notebooks/
 │   └── 01_llm_client.ipynb   # Step별 손코딩 실습 노트북
 ├── docs/
+│   ├── sessions/             # AI 대화 흐름 및 의사결정 아카이브
 │   └── study/                # 개념 직관 · 설계 비교 · 트러블슈팅 노트
 │       ├── README.md
 │       └── 01_llm_client_study.md
@@ -62,4 +63,5 @@ OPENROUTER_API_KEY=sk-or-v1-...
 ## 스터디 문서 & 할 일
 
 - 전체 스터디 목차: [docs/study/README.md](./docs/study/README.md)
+- 대화 흐름 기록: [docs/sessions/README.md](./docs/sessions/README.md)
 - 진행 현황 & 할 일: [TODO.md](./TODO.md)
