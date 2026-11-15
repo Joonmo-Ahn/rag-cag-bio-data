@@ -59,6 +59,7 @@ OPENROUTER_API_KEY=sk-or-v1-...
 
 ---
 
-## 스터디 문서
+## 스터디 문서 & 할 일
 
-- 전체 목차: [docs/study/README.md](./docs/study/README.md)
+- 전체 스터디 목차: [docs/study/README.md](./docs/study/README.md)
+- 진행 현황 & 할 일: [TODO.md](./TODO.md)
