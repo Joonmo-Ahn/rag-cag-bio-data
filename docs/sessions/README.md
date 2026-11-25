@@ -12,3 +12,4 @@ AI 에이전트와 함께 진행한 **실제 대화 흐름, 질문·답변, 시�
 | 기간 | 파일 | 주요 흐름 |
 | :--- | :--- | :--- |
 | 2026-11-14 ~ 11-16 | [2026-11-14_to_16_setup_and_01_llm_client.md](./2026-11-14_to_16_setup_and_01_llm_client.md) | 맥미니 Python/IDE 환경 점검 → 단축키/가상환경 트러블슈팅 → `01_llm_client.ipynb` Step 0~4 학습 → GitHub `rag-cag-bio-data` & `docs/study/`, `TODO.md` 구축 |
+| 2026-11-23 ~ 11-25 | [2026-11-23_to_25_uv_ide_fonts_and_usage.md](./2026-11-23_to_25_uv_ide_fonts_and_usage.md) | `uv` 업데이트 및 miniconda PATH 충돌 해결 → IDE/주피터/터미널/UI 폰트 세팅 → 파이썬 인자 문법(`*`, `*args`, `**kwargs`, `/`) & `print_usage` 토큰·비용 추적 구현 |

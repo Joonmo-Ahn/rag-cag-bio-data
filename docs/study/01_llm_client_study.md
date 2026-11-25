@@ -3,7 +3,7 @@
 - **대응 노트북**: [01_llm_client.ipynb](../../notebooks/01_llm_client.ipynb)
 - **대응 모듈**: [llm.py](../../src/core/llm.py)
 - **진행 현황**: `Step 0` ~ `Step 4` 완료 / `Step 5` ~ `Step 7` 진행 예정
-- **작성일**: 2026-11-16
+- **작성일**: 2026-11-16 (최근 업데이트: 2026-11-25)
 
 ---
 
@@ -64,6 +64,40 @@ class ConceptSummary(BaseModel):
 
 ---
 
+### 2.4 함수 인자 기호: `/`, `*`, `*args`, `**kwargs`
+
+| 표기 | 단독 사용 | 역할 |
+| :--- | :--- | :--- |
+| `/` | O | `/` **앞** 인자는 **위치 전용** (`이름=값` 금지) |
+| `*` | O | `*` **뒤** 인자는 **키워드 전용** (`이름=값` 강제) |
+| `*args` | X | 남는 위치 인자들을 **`tuple`**로 묶어 받음 |
+| `**kwargs` | X | 남는 키워드 인자들을 **`dict`**로 묶어 받음 |
+
+- **순서 규칙**: `def demo(a, /, b, *args, c, **kwargs):`
+- **왜 `*args` 뒤의 `c`는 키워드 전용인가?**: `*args`가 앞의 위치 인자를 무제한으로 다 삼켜버리기 때문에, 뒤의 `c`에 값을 넘길 수 있는 유일한 방법이 `c=5`(키워드)이기 때문입니다. 여기서 `args` 이름을 빼서 추가 위치 인자를 0개로 막은 것이 `chat(prompt, *, model=...)`의 단독 `*,`입니다.
+- **실무 효과**: `chat("안녕", "시스템 프롬프트")`처럼 실수로 위치 인자를 넘겨 `model` 자리에 잘못 들어가는 버그를 `TypeError`로 즉시 차단합니다.
+
+---
+
+### 2.5 토큰·비용 추적 (`print_usage`), `getattr`, 포함(Composition) 구조
+
+- **토큰 & 비용 포함 관계**:
+  ```text
+  total_tokens = in_tokens (prompt_tokens) + out_tokens (completion_tokens)
+                                               ├── reasoning_tokens (내부 사고 토큰)
+                                               └── visible tokens   (화면 출력 답변 토큰)
+  ```
+  - OpenRouter가 응답에 실어 주는 `usage.cost`는 **입력 + 출력(사고 토큰 포함) 전체에 대해 실제 차감된 USD 금액**입니다.
+  - `chat()`, `chat_structured()`, `chat_vision()`의 반환 타입(`-> str`, `-> T`)을 깨지 않기 위해 `print_usage(response)` 헬퍼 + `show_usage: bool = False` 옵션으로 분리하는 것이 깔끔합니다.
+- **`getattr(obj, "attr", default)` vs `d.get("key", default)`**:
+  - 둘 다 값이 없을 때 에러 없이 기본값을 돌려주는 안전 조회 도구입니다 (`dict`용 `get`, 객체용 `getattr`).
+  - **주의**: `d.get("x")`는 기본값을 생략해도 `None`을 반환하지만, `getattr(obj, "x")`는 **3번째 인자를 생략하면 `AttributeError`가 발생**하므로 반드시 `getattr(obj, "cost", None)`처럼 기본값을 함께 적어야 합니다.
+- **상속(`is-a`) vs 포함/합성(`has-a`)**:
+  - `response.usage.completion_tokens_details.reasoning_tokens`처럼 연달아 꺼낼 수 있는 이유는 상속이 아니라 **객체 안에 또 다른 객체가 속성으로 포함된(Composition) 구조** 때문입니다.
+  - 서버에서는 중첩 JSON 텍스트가 날아오지만, `openai` SDK(Pydantic)가 각 `{ ... }` 덩어리를 중첩 클래스 객체로 자동 파싱해 줍니다 (`response.model_dump()`로 다시 딕셔너리 확인 가능).
+
+---
+
 ## 3. 왜 실무에서 이 방식을 쓰나? (대안 비교)
 
 ### 3.1 `.parse()` (Structured Outputs) vs 일반 `completions.create()` 수동 JSON 파싱
@@ -99,6 +133,11 @@ class ConceptSummary(BaseModel):
   active_client = client or get_client(),  # ❌ 끝의 쉼표 때문에 1개짜리 tuple이 됨!
   ```
 - **해결**: 줄 끝의 쉼표(`,`) 제거 → `active_client = client or get_client()`
+
+### 4.3 `brew upgrade uv` 후에도 터미널 `uv --version`이 그대로였던 문제
+
+- **원인**: Conda `(base)` 환경 활성화로 `/Users/jmahn/miniconda3/bin`이 `/opt/homebrew/bin`보다 `PATH` 우선순위가 높았고, `miniconda3` 안에도 구버전 `uv`가 중복 설치되어 있었음.
+- **해결**: `miniconda3` 내부 `uv` 제거(`pip uninstall uv` 또는 `conda remove uv`) 후 `rehash` 실행 → 전역 공용 `/opt/homebrew/bin/uv` 하나로 통일.
 
 ---
 
